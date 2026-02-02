@@ -1,6 +1,7 @@
-# Git Branch Cleanup After PR Merge
+# Purge Local Branches After PR Merge
 
-Clean up local and remote branches after a successful PR merge.
+Clean up local branches after a successful PR merge. This prompt only deletes
+local branches—remote branches are left untouched for safety.
 
 ## Workflow
 
@@ -18,21 +19,16 @@ git checkout main
 git pull origin main
 ```
 
-### Step 3: Validate branches are safe to delete
+### Step 3: Discover and display branches
 
-A branch is **safe to delete** when:
-
-- It has been fully merged into `main`
-- It is not the current branch (`main`)
-
-List all local branches and check merge status:
+List all local branches and categorize by merge status:
 
 ```bash
-# List merged branches (safe to delete)
+# List merged branches (candidates for deletion)
 # Exclude protected branches: main, master, develop, staging, production, release/*, hotfix/*
 git branch --merged main | grep -v '^\*' | grep -vE '^\s*(main|master|develop|staging|production)\s*$' | grep -vE '^\s*(release|hotfix)/'
 
-# List unmerged branches (NOT safe to delete - show for awareness)
+# List unmerged branches (will NOT be deleted)
 git branch --no-merged main
 ```
 
@@ -40,21 +36,23 @@ git branch --no-merged main
 their original commits differ from the squash commit. Verify these manually
 against recent PR history before skipping.
 
-**IMPORTANT**: Before proceeding, confirm with the user which branches to delete. Show:
+Display the results to the user showing:
 
-1. **Safe branches** (merged) - these will be deleted
-2. **Unsafe branches** (unmerged) - these will be skipped
+1. **Will be deleted** (merged branches)
+2. **Will be skipped** (unmerged branches)
 
-### Step 4: Delete safe branches (local and remote)
+### Step 4: Get user confirmation
 
-For each safe branch identified in Step 3:
+**STOP and ask the user to confirm deletion.** Do not proceed until the user
+explicitly approves the list of branches to delete.
+
+### Step 5: Delete confirmed branches
+
+Only after user confirmation, delete each branch from Step 3:
 
 ```bash
 # Delete local branch
 git branch -d <branch-name>
-
-# Delete remote branch (if it exists on origin)
-git push origin --delete <branch-name> 2>/dev/null || echo "Remote branch not found (may be local-only)"
 ```
 
 ## Safety Rules
@@ -75,13 +73,13 @@ Pulling latest changes...
 
 Analyzing branches...
 
-SAFE TO DELETE (merged into main):
+WILL BE DELETED (merged into main):
   - feature/add-login
   - feature/user-dashboard
   - fix/typo-readme
 
-NOT SAFE (unmerged) - will be skipped:
+WILL BE SKIPPED (unmerged):
   - feature/wip-experimental
-
-Proceed with deletion? [y/N]
 ```
+
+**Awaiting confirmation before proceeding with deletion.**
