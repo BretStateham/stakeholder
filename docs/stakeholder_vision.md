@@ -40,7 +40,7 @@
 
 ## Basic Data Model - Needs to be formalized
 
-The stakeholder app needs to to support one or more Data Sets with the following basic model (to be formalized in an ADR):
+The stakeholder app needs to support one or more Data Sets with the following basic model (to be formalized in an ADR):
 
 Data Set:
 
@@ -160,7 +160,7 @@ Data Set Level (per Data Set)
 
 - System Administrator role is assigned via Microsoft Entra ID app roles
 - Data Set Owner is assigned by a System Administrator when creating a Data Set
-- Contributor and Reader roles are assigned by a Super Administrator or Data Set Owner via the Data Set Members entity
+- Contributor and Reader roles are assigned by a System Administrator or Data Set Owner via the Data Set Members entity
 - System Administrators are automatically granted Owner access to all Data Sets for oversight
 
 ## Design Guidelines
