@@ -113,8 +113,6 @@ Influence Relationships:
 
 - Single Page Application (SPA) architecture for seamless user experience.
 - Deployed as an Azure Web Application
-- Supports multi-user access 
-- Supports Role Based Access Control (RBAC) for managing permissions.
 - Can be run locally for development and testing purposes.
 - Uses a GitHub repository for version control and collaboration.
 - Uses GitHub Issues for tracking bugs and feature requests.
