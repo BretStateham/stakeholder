@@ -29,7 +29,8 @@ List all local branches and check merge status:
 
 ```bash
 # List merged branches (safe to delete)
-git branch --merged main | grep -v '^\*' | grep -v 'main'
+# Use anchored regex to match exact branch name, not substrings
+git branch --merged main | grep -v '^\*' | grep -vE '^\s*main\s*$'
 
 # List unmerged branches (NOT safe to delete - show for awareness)
 git branch --no-merged main
@@ -48,13 +49,13 @@ For each safe branch identified in Step 3:
 # Delete local branch
 git branch -d <branch-name>
 
-# Delete remote branch (if exists)
-git push origin --delete <branch-name>
+# Delete remote branch (if it exists on origin)
+git push origin --delete <branch-name> 2>/dev/null || echo "Remote branch not found (may be local-only)"
 ```
 
 ## Safety Rules
 
-- **NEVER** delete `main`, `master`, `develop`, or `release/*` branches
+- **NEVER** delete `main`, `master`, `develop`, `staging`, `production`, `release/*`, or `hotfix/*` branches
 - **NEVER** delete unmerged branches without explicit user confirmation
 - **ALWAYS** show the list of branches to be deleted before proceeding
 - **ALWAYS** use `-d` (not `-D`) for local deletion to prevent accidental deletion of unmerged work
