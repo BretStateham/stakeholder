@@ -7,33 +7,70 @@ Sources:
 * [.copilot-tracking/research/2026-02-01-stakeholder-tech-stack-research.md](.copilot-tracking/research/2026-02-01-stakeholder-tech-stack-research.md) - Technology recommendations
 * [docs/stakeholder_vision.md](docs/stakeholder_vision.md) - Vision and requirements
 
+> ⚠️ **FILE PRESERVATION NOTICE**: This implementation adds React to an EXISTING folder. The following must be preserved throughout all phases:
+> * `docs/` - Vision and documentation
+> * `images/` - Brand assets and logos  
+> * `.copilot-tracking/` - Planning and research files
+> * `stakeholder.code-workspace` - VS Code workspace
+> * `.git/` - Git repository history
+
 ---
 
 ## Implementation Phase 1: Project Foundation
 
 <!-- parallelizable: false -->
 
-### Step 1.1: Initialize React project with Vite and TypeScript
+### Step 1.1: Initialize React project with Vite and TypeScript in existing folder
 
-Create new React project using Vite with TypeScript template for fast development experience and optimal production builds.
+Initialize Vite React TypeScript project in the EXISTING workspace folder, preserving all current files and directories.
 
-Files:
-* `package.json` - Create with Vite React TypeScript configuration
-* `vite.config.ts` - Create with path aliases and build settings
-* `tsconfig.json` - Create with strict TypeScript configuration
-* `index.html` - Create entry point
+**IMPORTANT - Files to PRESERVE (do not delete or overwrite):**
+* `docs/` - Contains stakeholder_vision.md
+* `images/` - Contains logos/ with brand assets
+* `.copilot-tracking/` - Contains planning and research files
+* `stakeholder.code-workspace` - VS Code workspace configuration
+* `.git/` - Git repository
+
+Files Vite will CREATE:
+* `package.json` - Vite React TypeScript configuration
+* `vite.config.ts` - Vite configuration with React plugin
+* `tsconfig.json` - TypeScript configuration
+* `tsconfig.node.json` - TypeScript config for Vite
+* `tsconfig.app.json` - TypeScript config for app code
+* `index.html` - Entry point
+* `src/` - Source directory with starter files
+* `src/main.tsx` - React entry point
+* `src/App.tsx` - Root component
+* `src/App.css` - App styles
+* `src/index.css` - Global styles
+* `src/vite-env.d.ts` - Vite type declarations
+* `src/assets/` - Static assets folder
+* `.gitignore` - Git ignore patterns (merges with existing)
+* `eslint.config.js` - ESLint configuration
+* `README.md` - Project readme (will be created, can be merged with existing docs later)
 
 Success criteria:
 * `npm run dev` starts development server on localhost:5173
 * TypeScript compilation has no errors
 * Hot module replacement works
+* All existing files in docs/, images/, .copilot-tracking/ remain intact
 
 Commands:
 ```bash
-npm create vite@latest stakeholder-app -- --template react-ts
-cd stakeholder-app
+# Initialize Vite in current directory
+npm create vite@latest . -- --template react-ts
+
+# When prompted "Current directory is not empty":
+# Select: "Ignore files and continue"
+
+# Then install dependencies
 npm install
 ```
+
+Interactive prompts:
+1. "Current directory is not empty. Please choose how to proceed:"
+   → Select **"Ignore files and continue"** (preserves existing files)
+2. Framework selection is skipped with `--template react-ts`
 
 Dependencies:
 * Node.js 20+ installed
@@ -123,7 +160,7 @@ Files:
 * `src/index.css` - Update with Roboto font import and CSS variables
 * `tailwind.config.js` - Update with font family configuration
 * `src/App.tsx` - Update with base layout structure
-* `public/` - Copy logo assets from `images/logos/`
+* `public/logos/` - Symlink or copy from existing `images/logos/` (preserve originals)
 
 Success criteria:
 * Roboto font loads and applies to all text

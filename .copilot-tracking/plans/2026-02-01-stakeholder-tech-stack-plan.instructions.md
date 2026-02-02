@@ -8,6 +8,8 @@ applyTo: '.copilot-tracking/changes/2026-02-01-stakeholder-tech-stack-changes.md
 
 Implement the Stakeholder application using React 18+ with TypeScript, Azure SQL Database Serverless, and Microsoft Entra ID authentication following the recommended architecture from technology stack research.
 
+> ⚠️ **IMPORTANT**: This plan initializes React in the EXISTING workspace folder. All existing files and folders (`docs/`, `images/`, `.copilot-tracking/`, `stakeholder.code-workspace`) MUST be preserved during implementation. Do NOT use commands that create new subdirectories or delete existing files.
+
 ## Objectives
 
 * Set up React SPA with Vite, TypeScript, and shadcn/ui component library
@@ -19,10 +21,12 @@ Implement the Stakeholder application using React 18+ with TypeScript, Azure SQL
 
 ## Context Summary
 
-### Project Files
+### Project Files (PRESERVE THESE)
 
 * [docs/stakeholder_vision.md](docs/stakeholder_vision.md) - Vision document with personas, use cases, data fields, and technical requirements
 * [images/logos/](images/logos/) - Brand assets for UI theming
+* [stakeholder.code-workspace](stakeholder.code-workspace) - VS Code workspace configuration
+* [.copilot-tracking/](.copilot-tracking/) - Planning and research files
 
 ### References
 
@@ -39,8 +43,9 @@ Implement the Stakeholder application using React 18+ with TypeScript, Azure SQL
 
 <!-- parallelizable: false -->
 
-* [ ] Step 1.1: Initialize React project with Vite and TypeScript
-  * Details: .copilot-tracking/details/2026-02-01-stakeholder-tech-stack-details.md (Lines 21-55)
+* [ ] Step 1.1: Initialize React project with Vite and TypeScript in existing folder
+  * Details: .copilot-tracking/details/2026-02-01-stakeholder-tech-stack-details.md (Lines 21-65)
+  * IMPORTANT: Preserve existing docs/, images/, and .copilot-tracking/ folders
 * [ ] Step 1.2: Install core dependencies (React Router, Zustand, TanStack Query)
   * Details: .copilot-tracking/details/2026-02-01-stakeholder-tech-stack-details.md (Lines 57-85)
 * [ ] Step 1.3: Configure shadcn/ui component library
@@ -207,6 +212,7 @@ Implement the Stakeholder application using React 18+ with TypeScript, Azure SQL
 
 ## Success Criteria
 
+* Existing files preserved: docs/, images/, .copilot-tracking/, stakeholder.code-workspace intact
 * React SPA builds and runs locally with hot reload
 * Authentication flow works in local development and Azure deployment
 * All entity CRUD operations function through AG Grid interface
