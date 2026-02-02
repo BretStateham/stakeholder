@@ -1,4 +1,3 @@
-````prompt
 # PR Review Response Handler
 
 Respond to all comments on a GitHub pull request review. Handle PR-level comments and file-level inline comments appropriately.
@@ -253,5 +252,3 @@ Found 5 comments to address:
 
 Proceed with changes? [y/N]
 ```
-
-````
