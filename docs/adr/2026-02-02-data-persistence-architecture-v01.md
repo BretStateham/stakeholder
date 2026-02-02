@@ -306,7 +306,7 @@ model DataSet {
 model Person {
   id            String   @id @default(uuid())
   dataSetId     String
-  dataSet       DataSet  @relation(fields: [dataSetId], references: [id])
+  dataSet       DataSet  @relation(fields: [dataSetId], references: [id], onDelete: Cascade)
   firstName     String
   lastName      String
   preferredName String?
@@ -330,12 +330,15 @@ model Person {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([dataSetId])
+  @@index([managerId])
 }
 
 model Team {
   id          String   @id @default(uuid())
   dataSetId   String
-  dataSet     DataSet  @relation(fields: [dataSetId], references: [id])
+  dataSet     DataSet  @relation(fields: [dataSetId], references: [id], onDelete: Cascade)
   name        String
   description String?
 
@@ -344,12 +347,14 @@ model Team {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([dataSetId])
 }
 
 model Company {
   id         String   @id @default(uuid())
   dataSetId  String
-  dataSet    DataSet  @relation(fields: [dataSetId], references: [id])
+  dataSet    DataSet  @relation(fields: [dataSetId], references: [id], onDelete: Cascade)
   name       String
   website    String?
   hqLocation String?
@@ -358,12 +363,14 @@ model Company {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([dataSetId])
 }
 
 model Workstream {
   id          String   @id @default(uuid())
   dataSetId   String
-  dataSet     DataSet  @relation(fields: [dataSetId], references: [id])
+  dataSet     DataSet  @relation(fields: [dataSetId], references: [id], onDelete: Cascade)
   name        String
   description String?
   adoLink     String?
@@ -372,6 +379,8 @@ model Workstream {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([dataSetId])
 }
 
 // Junction tables
@@ -422,6 +431,11 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 // Run once at app startup
+// Note: WAL mode persists in the database file.
+// busy_timeout and synchronous are connection-level settings that may need
+// reapplication if connection pooling creates new connections.
+// For production, these settings can also be applied via Prisma middleware
+// or the connection URL.
 async function configureSQLite() {
   // Enable WAL mode - allows reads during writes
   await prisma.$executeRaw`PRAGMA journal_mode = WAL;`;
@@ -449,15 +463,25 @@ app.use(express.json());
 
 // API routes
 app.get('/api/people', async (req, res) => {
-  const people = await prisma.person.findMany({
-    include: { manager: true, teams: { include: { team: true } } }
-  });
-  res.json(people);
+  try {
+    const people = await prisma.person.findMany({
+      include: { manager: true, teams: { include: { team: true } } }
+    });
+    res.json(people);
+  } catch (error) {
+    console.error('Failed to fetch people:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
 });
 
 app.post('/api/people', async (req, res) => {
-  const person = await prisma.person.create({ data: req.body });
-  res.json(person);
+  try {
+    const person = await prisma.person.create({ data: req.body });
+    res.json(person);
+  } catch (error) {
+    console.error('Failed to create person:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
 });
 
 // Serve React SPA static files (in production)
