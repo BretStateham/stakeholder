@@ -38,31 +38,44 @@
 
 - As a Team Member I need to be able to import and export the stakeholder data as JSON so that I can easily backup the data, or create a new instance with the same data.
 
-## Data Fields
+## Basic Data Model - Needs to be formalized
+
+The stakeholder app needs to support one or more Data Sets with the following basic model (to be formalized in an ADR):
 
 Data Set:
+
 - Data Set Name
-- Owner Name
-- Owner Email
+- Description
+
+Data Set Members (who can access the Data Set):
+
+- User Reference
+- Data Set Reference
+- Role (Owner, Contributor, Reader)
+
+Each Data Set contains the following entities and relationships:
 
 Companies:
 
 - Company Name
 - Website
 - Headquarters Location
+- Is Active
 
 Workstreams:
 
 - Workstream Name
 - Description
 - ADO Link
+- Is Active
 
 Teams:
 
 - Team Name
 - Description
+- Is Active
 
-People: 
+People:
 
 - First Name
 - Last Name
@@ -74,6 +87,7 @@ People:
 - Title
 - Role
 - Notes
+- Is Active
 
 People Reports To:
 
@@ -90,15 +104,64 @@ Company Teams:
 - Company Reference
 - Team Reference
 
+People Companies:
+
+- Person Reference
+- Company Reference
+
 People Workstreams:
 
 - Person Reference
 - Workstream Reference
+- RACI Role (Responsible, Accountable, Consulted, Informed)
 
 Influence Relationships:
 
 - Influencer Person Reference
 - Influencee Person Reference
+
+## Role-Based Access Control (RBAC)
+
+The application uses a two-tier RBAC model with global application roles and Data Set-scoped roles.
+
+### Global Application Roles
+
+Global roles are managed in Microsoft Entra ID and control application-wide permissions:
+
+- **System Administrator** - Highest-privilege role. Can create and delete Data Sets, assign Data Set Owners, and manage system configuration. Should be limited to 2-3 trusted users.
+
+### Data Set Roles
+
+Data Set roles are stored in the application database and control access within a specific Data Set:
+
+- **Owner** - Full access to all data within the Data Set. Can assign Contributor and Reader roles to other users. At least one Owner is required per Data Set.
+
+- **Contributor** - Can create, update, and delete all entities within the Data Set. Cannot manage user access or delete the Data Set.
+
+- **Reader** - View-only access to all data within the Data Set. Cannot make any modifications.
+
+### Role Hierarchy
+
+```text
+Global Level
+└── System Administrator
+    └── Can: create/delete Data Sets, assign Data Set Owners, system settings
+
+Data Set Level (per Data Set)
+├── Owner
+│   └── Can: full CRUD, assign Contributor/Reader roles
+├── Contributor
+│   └── Can: create, update, delete entities (not roles)
+└── Reader
+    └── Can: view only
+```
+
+### Role Assignment
+
+- System Administrator role is assigned via Microsoft Entra ID app roles
+- Data Set Owner is assigned by a System Administrator when creating a Data Set
+- Contributor and Reader roles are assigned by a System Administrator or Data Set Owner via the Data Set Members entity
+- System Administrators are automatically granted Owner access to all Data Sets for oversight
 
 ## Design Guidelines
 
