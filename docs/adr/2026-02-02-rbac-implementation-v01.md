@@ -123,7 +123,7 @@ Store all roles including system-level admin in the database. Check database on 
 |----------|-------|-----------|
 | Orphan Data Sets | Allowed | SystemAdmin can always assign new Owner |
 | Role change timing | Immediate | Take effect on next request (no cache) |
-| Self-service access | No | Admin-only role assignment |
+| Self-service access | Request only | Users can request access; admin approves/assigns |
 | Data Set deletion | Soft delete | Use `isActive` flag; data preserved |
 | Multi-tenant | No | Single Entra ID tenant only |
 | Guest users (B2B) | No | Only tenant members |
@@ -221,6 +221,8 @@ export type DataSetRole = "Owner" | "Contributor" | "Reader";
 
 ### Prisma Schema
 
+> **Design Note:** String types are used for `principalType`, `role`, `status`, and `requestedRole` fields instead of Prisma enums. While enums provide compile-time type safety and database-level constraints, strings offer flexibility for adding new values without schema migrations. Consider migrating to enums (e.g., `enum DataSetRole { Owner Contributor Reader }`) if stricter type enforcement is preferred.
+
 ```prisma
 model User {
   id            String   @id @default(uuid())
@@ -230,7 +232,9 @@ model User {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
   
-  createdDataSets DataSet[] @relation("CreatedBy")
+  createdDataSets    DataSet[]       @relation("CreatedBy")
+  assignedMembers    DataSetMember[] @relation("AssignedMembers")
+  resolvedRequests   AccessRequest[] @relation("ResolvedRequests")
 }
 
 model EntraGroup {
@@ -265,6 +269,7 @@ model DataSetMember {
   assignedById  String?
   
   dataSet       DataSet  @relation(fields: [dataSetId], references: [id], onDelete: Cascade)
+  assignedBy    User?    @relation("AssignedMembers", fields: [assignedById], references: [id])
   
   @@unique([dataSetId, principalId])
   @@index([principalId])
@@ -284,6 +289,7 @@ model AccessRequest {
   resolvedById  String?
   
   dataSet       DataSet  @relation(fields: [dataSetId], references: [id], onDelete: Cascade)
+  resolvedBy    User?    @relation("ResolvedRequests", fields: [resolvedById], references: [id])
   
   @@index([dataSetId])
   @@index([requesterId])
@@ -344,7 +350,7 @@ Request → validateToken → loadUser → requireSystemAdmin (or) requireDataSe
 | `Group.Read.All` | Application | Search groups by name |
 | `GroupMember.Read.All` | Application | Check group membership (overage) |
 | `Mail.Send` | Application | Send access request notifications |
-
+> **Note:** Application-type permissions require Azure AD admin consent. The `Mail.Send` permission with Application type requires a configured sender mailbox (either a shared mailbox or a mailbox the service principal has access to). Ensure these configurations are complete during Azure AD setup.
 ### Entra ID Configuration
 
 Add app role to manifest:
@@ -363,6 +369,11 @@ Add app role to manifest:
   ]
 }
 ```
+
+> **Note:** Generate a unique GUID for the `id` field using:
+> - Linux/macOS: `uuidgen`
+> - PowerShell: `[guid]::NewGuid()`
+> - Online: [guidgenerator.com](https://www.guidgenerator.com/)
 
 Enable groups claim in Token Configuration:
 
