@@ -29,12 +29,16 @@ List all local branches and check merge status:
 
 ```bash
 # List merged branches (safe to delete)
-# Use anchored regex to match exact branch name, not substrings
-git branch --merged main | grep -v '^\*' | grep -vE '^\s*main\s*$'
+# Exclude protected branches: main, master, develop, staging, production, release/*, hotfix/*
+git branch --merged main | grep -v '^\*' | grep -vE '^\s*(main|master|develop|staging|production)\s*$' | grep -vE '^\s*(release|hotfix)/'
 
 # List unmerged branches (NOT safe to delete - show for awareness)
 git branch --no-merged main
 ```
+
+**Note**: Branches merged via "squash and merge" may appear as unmerged because
+their original commits differ from the squash commit. Verify these manually
+against recent PR history before skipping.
 
 **IMPORTANT**: Before proceeding, confirm with the user which branches to delete. Show:
 
@@ -73,7 +77,7 @@ Analyzing branches...
 
 SAFE TO DELETE (merged into main):
   - feature/add-login
-  - bstateha/dataModel
+  - feature/user-dashboard
   - fix/typo-readme
 
 NOT SAFE (unmerged) - will be skipped:
