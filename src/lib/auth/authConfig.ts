@@ -1,5 +1,21 @@
 import { Configuration, LogLevel } from "@azure/msal-browser";
 
+// Validate required environment variables in development
+if (import.meta.env.DEV) {
+  if (!import.meta.env.VITE_ENTRA_CLIENT_ID) {
+    console.warn(
+      "⚠️ VITE_ENTRA_CLIENT_ID is not configured. Authentication will fail.\n" +
+      "Copy .env.example to .env.local and add your Entra ID client ID."
+    );
+  }
+  if (!import.meta.env.VITE_ENTRA_TENANT_ID) {
+    console.warn(
+      "⚠️ VITE_ENTRA_TENANT_ID is not configured. Using 'common' tenant.\n" +
+      "For single-tenant apps, set this to your tenant ID in .env.local."
+    );
+  }
+}
+
 export const msalConfig: Configuration = {
   auth: {
     clientId: import.meta.env.VITE_ENTRA_CLIENT_ID || "",
