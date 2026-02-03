@@ -161,6 +161,10 @@ The primary drivers for this decision are:
 * Requires adding test configuration block to existing `vite.config.ts`
 * Test files co-located with source files (project convention)
 
+### Risks
+
+* React Testing Library ecosystem may lag behind React 19 API changes; monitor releases for compatibility updates
+
 ## Implementation Notes
 
 **Dependencies to install:**
@@ -180,10 +184,11 @@ npm install -D vitest jsdom @testing-library/react @testing-library/dom @testing
 
 **Vite configuration addition:**
 
+> **Note:** When integrating with an existing `vite.config.ts`, preserve existing configuration blocks (such as `server`) alongside the new `test` block.
+
 ```typescript
 // vite.config.ts
-/// <reference types="vitest/config" />
-import { defineConfig } from 'vite'
+import { defineConfig, mergeConfig } from 'vitest/config'
 import react from '@vitejs/plugin-react'
 import path from 'path'
 
