@@ -170,7 +170,7 @@ The primary drivers for this decision are:
 **Dependencies to install:**
 
 ```bash
-npm install -D vitest jsdom @testing-library/react @testing-library/dom @testing-library/user-event @testing-library/jest-dom
+npm install -D vitest jsdom @testing-library/react @testing-library/dom @testing-library/user-event @testing-library/jest-dom @vitest/coverage-v8
 ```
 
 | Package                    | Purpose                              |
@@ -181,6 +181,7 @@ npm install -D vitest jsdom @testing-library/react @testing-library/dom @testing
 | @testing-library/dom       | DOM querying (peer dependency)       |
 | @testing-library/user-event | User interaction simulation         |
 | @testing-library/jest-dom  | Custom DOM matchers                  |
+| @vitest/coverage-v8        | V8 coverage provider for vitest      |
 
 **Vite configuration addition:**
 
