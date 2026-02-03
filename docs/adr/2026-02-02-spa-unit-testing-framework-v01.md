@@ -170,12 +170,13 @@ The primary drivers for this decision are:
 **Dependencies to install:**
 
 ```bash
-npm install -D vitest jsdom @testing-library/react @testing-library/dom @testing-library/user-event @testing-library/jest-dom
+npm install -D vitest @vitest/ui jsdom @testing-library/react @testing-library/dom @testing-library/user-event @testing-library/jest-dom
 ```
 
 | Package                    | Purpose                              |
 | -------------------------- | ------------------------------------ |
 | vitest                     | Test runner, assertions, mocking     |
+| @vitest/ui                 | Interactive UI for viewing test results |
 | jsdom                      | Browser environment simulation       |
 | @testing-library/react     | React component testing utilities    |
 | @testing-library/dom       | DOM querying (peer dependency)       |
